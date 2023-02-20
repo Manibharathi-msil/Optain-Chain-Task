@@ -6,8 +6,6 @@ import 'package:option_chain_price_evaluation_task/bloc/option_chain_state.dart'
 import 'package:option_chain_price_evaluation_task/constants/constant.dart';
 import 'package:option_chain_price_evaluation_task/repository/list_resp.dart';
 import 'package:option_chain_price_evaluation_task/widget/option_chain_widget.dart';
-import 'package:sticky_headers/sticky_headers.dart';
-
 import 'bloc/option_chain_bloc.dart';
 import 'model/list_call_put.dart';
 
