@@ -314,6 +314,19 @@ class Response {
           "OI": "54L",
           "Change": "0.7%"
         }
+      },
+      {
+        "value": "17870",
+        "put": {
+          "LTP": "90",
+          "OI": "3L",
+          "Change": "-0.6%"
+        },
+        "call": {
+          "LTP": "34",
+          "OI": "54L",
+          "Change": "0.7%"
+        }
       }
     ]
   };

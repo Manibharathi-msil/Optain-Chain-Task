@@ -13,10 +13,12 @@ class OptionChainblocLoading extends OptionChainState {}
 
 class PositionState extends OptionChainState {
   int pos;
-  PositionState({required this.pos});
+  int bias;
+  PositionState({required this.pos,required this.bias});
 }
 
 class OptionChainError extends OptionChainState {
   String msg;
   OptionChainError({required this.msg});
 }
+
