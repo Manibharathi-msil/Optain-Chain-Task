@@ -61,34 +61,108 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return List.generate(
       values.length, (index) =>
-         Stack(
+         Column(
+           crossAxisAlignment: CrossAxisAlignment.center,
            children: [
+             if (type != Strings.strike)
              Container(
                alignment: Alignment.center,
                width: MediaQuery.of(context).size.width / 5,
-               height: 60.0,
+               height: 60,
                color: bg,
                child: Text(values.elementAt(index),
                    style: const TextStyle(color: Colors.white)),
              ),
-             if (type == Strings.strike)
-             index == positionIndex ? Visibility(
-               visible: searchedValue.isNotEmpty,
-               child: Container(
-                     decoration: BoxDecoration(
-                         borderRadius: BorderRadius.circular(30.0),
-                         color: Colors.grey),
-                     alignment: Alignment.center,
-                     width: MediaQuery.of(context).size.width /5,
-                     height: 40.0,
-                     child: Text(values.elementAt(index),
-                         style: const TextStyle(color: Colors.white)),
-                   ),
-             ):Container(),
-           ],
+             if((type == Strings.strike) && index != positionIndex)
+             Container(
+               alignment: Alignment.center,
+               width: MediaQuery.of(context).size.width / 3.3,
+               height: 60.0,
+               child:  Container(
+                 alignment: Alignment.center,
+                 width: MediaQuery.of(context).size.width / 5,
+                 height: 60.0,
+                 color: bg,
+                 child: Text(values.elementAt(index),
+                     style: const TextStyle(color: Colors.white)),
+               ),
+             ),
+          if (searchedValue.isNotEmpty &&
+              type == Strings.strike &&
+              index == positionIndex)
+            getheaderWidget(searchedValue == values.elementAt(index),
+                values.elementAt(index), bg)
+        ],
          ),
     );
 
+  }
+
+  Widget getheaderWidget(bool isMatching , String value , bg){
+    print('isMatching$isMatching and value$value');
+    if(isMatching) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width / 3.3,
+            height: 60.0,
+            child: Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width / 5,
+              height: 60.0,
+              color: bg,
+              child: Text(searchedValue,
+                  style: const TextStyle(color: Colors.white)),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.0),
+                color: Colors.grey),
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width /3.3,
+            height: 35,
+            child:  Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width / 5,
+              height: 35.0,
+              color: Colors.grey,
+              child: Text('Price :' + ""+ searchedValue,
+                  style: const TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      );
+    }else {
+      return Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width / 5,
+            height: 60.0,
+            color: bg,
+            child: Text(value,
+                style: const TextStyle(color: Colors.white)),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30.0),
+                  color: Colors.grey),
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width /3.3,
+              height: 35,
+              child: Text('Price :' + ""+ searchedValue,
+                  style: const TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      );
+    }
   }
 
   //Generating values of entire length of rows
@@ -133,14 +207,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                 );
                               }
                             }
-                            return TextField(
-                              onSubmitted: (value) {
-                                searchedValue = value;
-                                optionChainBloc.add(FetchPosition(v: value));
-                              },
-                              decoration: const InputDecoration(
-                                  hintText: Strings.search,
-                                  suffixIcon: Icon(Icons.search)),
+                            return Container(
+                              color: Colors.black,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      onSubmitted: (value) {
+                                        searchedValue = value;
+                                        optionChainBloc.add(FetchPosition(v: value));
+                                      },
+                                      decoration: const InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.black,
+                                          hintText: Strings.search,
+                                          hintStyle: TextStyle(color: Colors.grey),),
+                                      style: const TextStyle(color: Colors.white),
+                                         // suffixIcon: Icon(Icons.search),suffixIconColor: Colors.white),
+                                    ),
+                                  ),
+                                  Icon(Icons.search, color: Colors.white,)
+                                ],
+                              ),
                             );
                           }),
                     ))
@@ -244,8 +333,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.grey),
               alignment: Alignment.center,
               width: (MediaQuery.of(context).size.width / 5)*1.5,
-              height: 40.0,
-              child: Text(searchedValue,
+              height: 35.0,
+              child: Text('Price :' + ""+ searchedValue,
                   style: const TextStyle(color: Colors.white)),
             );
           } else {
@@ -265,19 +354,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.grey),
               alignment: Alignment.center,
               width: (MediaQuery.of(context).size.width / 5)*1.5,
-              height: 40.0,
-              child: Text(searchedValue,
+              height: 35.0,
+              child: Text('Price :' + ""+ searchedValue,
                   style: const TextStyle(color: Colors.white)),
             );
           } else {
             return Container();
           }
         });
-  }
-  @override
-  void dispose() {
-    _controller.removeListener(scrollListenerWithItemCount);
-    super.dispose();
   }
 
 }
