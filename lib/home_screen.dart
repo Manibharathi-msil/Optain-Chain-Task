@@ -22,12 +22,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int positionIndex= -1;
   var searchedValue='';
-  bool onfirstScroll = true;
   double height = 0;
   OptionChainBloc optionChainBloc = OptionChainBloc(Response());
   ValueNotifier<int> firstVisibleItem = ValueNotifier<int>(0);
   ValueNotifier<int> lastVisibleItem = ValueNotifier<int>(0);
-  ValueNotifier<int> strikeIndex = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -73,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                child: Text(values.elementAt(index),
                    style: const TextStyle(color: Colors.white)),
              ),
-             if((type == Strings.strike) && index != positionIndex)
+             if((type == Strings.strike) && index != positionIndex )
              Container(
                alignment: Alignment.center,
                width: MediaQuery.of(context).size.width / 3.3,
@@ -99,7 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getheaderWidget(bool isMatching , String value , bg){
-    print('isMatching$isMatching and value$value');
     if(isMatching) {
       return Stack(
         alignment: Alignment.center,
@@ -227,7 +224,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                          // suffixIcon: Icon(Icons.search),suffixIconColor: Colors.white),
                                     ),
                                   ),
-                                  Icon(Icons.search, color: Colors.white,)
+
+                                  const Icon(Icons.search, color: Colors.white,)
                                 ],
                               ),
                             );
@@ -268,16 +266,6 @@ class _MyHomePageState extends State<MyHomePage> {
     firstVisibleItem.value =
         (((scrollOffset)) / (scrollRange + (viewportHeight)) * itemCount)
             .floor();
-    if (onfirstScroll) {
-      _controller.animateTo(
-          (height *
-              (strikeIndex.value -
-                  (((firstVisibleItem.value + lastVisibleItem.value) / 2))))
-              .toDouble(),
-          duration: const Duration(seconds: 1),
-          curve: Curves.easeInExpo);
-      onfirstScroll = false;
-    }
   }
 
 
@@ -303,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:
-              _buildCells(Colors.green, option, Strings.strike, 0),
+              _buildCells(Colors.green[900]!, option, Strings.strike, 0),
             ),
             Flexible(
               child: SingleChildScrollView(
@@ -326,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return ValueListenableBuilder<int>(
         valueListenable: lastVisibleItem,
         builder: (context, value, _) {
-          if (value < positionIndex && value !=0) {
+          if (value <= positionIndex && value !=0 && searchedValue.isNotEmpty) {
             return Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30.0),
@@ -347,7 +335,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return ValueListenableBuilder<int>(
         valueListenable: firstVisibleItem,
         builder: (context, value, _) {
-          if (value >= positionIndex && value != 0 && positionIndex != -1) {
+          if (value >= positionIndex && value != 0 && positionIndex != -1 && searchedValue.isNotEmpty) {
             return Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30.0),
