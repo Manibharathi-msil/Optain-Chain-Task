@@ -20,15 +20,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var positionIndex;
-  var searfchedValue='';
+  int positionIndex= -1;
+  var searchedValue='';
   bool onfirstScroll = true;
   double height = 0;
   OptionChainBloc optionChainBloc = OptionChainBloc(Response());
   ValueNotifier<int> firstVisibleItem = ValueNotifier<int>(0);
   ValueNotifier<int> lastVisibleItem = ValueNotifier<int>(0);
   ValueNotifier<int> strikeIndex = ValueNotifier<int>(0);
-  ValueNotifier<String> strikeValue = ValueNotifier<String>("0");
 
   @override
   void initState() {
@@ -40,12 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var option = Option.fromJson(Response.response);
   final ScrollController _controller = ScrollController();
-  bool isVisible = false;
-  String value = '';
 
   //In currentIndex we are adding 3 values
   List<Widget> _buildCells(Color bg, Option option, String type,
-      int currentIndex, OptionChainBloc bloc) {
+      int currentIndex) {
     List<String> values = [];
     if (type == Strings.put) {
       values.add(option.strikes.elementAt(currentIndex).put.change);
@@ -75,20 +72,23 @@ class _MyHomePageState extends State<MyHomePage> {
                    style: const TextStyle(color: Colors.white)),
              ),
              if (type == Strings.strike)
-             index == positionIndex ? Container(
-                   decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(30.0),
-                       color: Colors.grey),
-                   alignment: Alignment.center,
-                   width: MediaQuery.of(context).size.width / 5,
-                   height: 60.0,
-                   // color: bg,
-                   child: Text(values.elementAt(index),
-                       style: const TextStyle(color: Colors.white)),
-                 ):Container(),
+             index == positionIndex ? Visibility(
+               visible: searchedValue.isNotEmpty,
+               child: Container(
+                     decoration: BoxDecoration(
+                         borderRadius: BorderRadius.circular(30.0),
+                         color: Colors.grey),
+                     alignment: Alignment.center,
+                     width: MediaQuery.of(context).size.width /5,
+                     height: 40.0,
+                     child: Text(values.elementAt(index),
+                         style: const TextStyle(color: Colors.white)),
+                   ),
+             ):Container(),
            ],
          ),
     );
+
   }
 
   //Generating values of entire length of rows
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       option.strikes.length,
           (index) =>
           Row(
-            children: _buildCells(bg, option, type, index , optionChainBloc),
+            children: _buildCells(bg, option, type, index ),
           ),
     );
   }
@@ -124,7 +124,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             double pos = 60;
                             if (state is PositionState) {
                               pos = pos * state.pos;
-                              print('--------> ${state.pos}');
                               positionIndex = state.pos;
                               if (pos != -1) {
                                 _controller.animateTo(
@@ -136,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                             return TextField(
                               onSubmitted: (value) {
-                                searfchedValue = value;
+                                searchedValue = value;
                                 optionChainBloc.add(FetchPosition(v: value));
                               },
                               decoration: const InputDecoration(
@@ -170,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   scrollListenerWithItemCount() {
-    int itemCount = 25;
+    int itemCount = option.strikes.length;
     double? scrollOffset = _controller.position.pixels;
     double? viewportHeight = _controller.position.viewportDimension;
     double? scrollRange = (_controller.position.maxScrollExtent) -
@@ -215,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:
-              _buildCells(Colors.green, option, Strings.strike, 0,optionChainBloc),
+              _buildCells(Colors.green, option, Strings.strike, 0),
             ),
             Flexible(
               child: SingleChildScrollView(
@@ -244,10 +243,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.circular(30.0),
                   color: Colors.grey),
               alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width / 5,
-              height: 60.0,
-              // color: bg,
-              child: Text(searfchedValue,
+              width: (MediaQuery.of(context).size.width / 5)*1.5,
+              height: 40.0,
+              child: Text(searchedValue,
                   style: const TextStyle(color: Colors.white)),
             );
           } else {
@@ -260,16 +258,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return ValueListenableBuilder<int>(
         valueListenable: firstVisibleItem,
         builder: (context, value, _) {
-          if (value >= positionIndex && value != 0) {
+          if (value >= positionIndex && value != 0 && positionIndex != -1) {
             return Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30.0),
                   color: Colors.grey),
               alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width / 5,
-              height: 60.0,
-              // color: bg,
-              child: Text(searfchedValue,
+              width: (MediaQuery.of(context).size.width / 5)*1.5,
+              height: 40.0,
+              child: Text(searchedValue,
                   style: const TextStyle(color: Colors.white)),
             );
           } else {
@@ -277,6 +274,10 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         });
   }
-
+  @override
+  void dispose() {
+    _controller.removeListener(scrollListenerWithItemCount);
+    super.dispose();
+  }
 
 }
